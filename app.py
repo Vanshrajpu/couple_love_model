@@ -81,7 +81,9 @@ st.markdown("""
 # LOAD MODEL
 # =====================================================
 
-model = joblib.load("model.pkl")
+import os
+model_path = os.path.join(os.path.dirname(__file__), "couple_love_model.pkl")
+model = joblib.load(model_path)
 
 # =====================================================
 # HEADER
