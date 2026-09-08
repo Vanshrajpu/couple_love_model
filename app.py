@@ -4,7 +4,7 @@ import numpy as np
 import os
 
 # Sahi path - tere repo ke hisab se
-model_path = "couple_love_model/couple_love_model.pkl"
+model_path = "couple_love_model.pkl"
 
 # Model load
 with open(model_path, "rb") as f:
