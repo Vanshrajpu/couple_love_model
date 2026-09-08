@@ -2,8 +2,6 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-import plotly.graph_objects as go
-import plotly.express as px
 
 st.set_page_config(page_title="LoveScore AI Pro", page_icon="💖", layout="wide")
 
@@ -28,24 +26,18 @@ def get_model():
     m = LinearRegression(); m.fit(X,y); return m
 model = get_model()
 
-# --- HERO SECTION WITH PHOTO ---
+# HERO WITH PHOTO
 c1, c2 = st.columns([1, 1.3])
 with c1:
-    st.image("https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=800", caption="Love is data + heart 💖", use_container_width=True)
-    st.markdown('<div style="text-align:center; margin-top:-10px;"><span style="color:#FF8FA3; font-size:13px;">❤️ 1,200+ couples tested this AI</span></div>', unsafe_allow_html=True)
+    st.image("https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=800", use_container_width=True)
 with c2:
-    st.markdown("<h1 style='text-align:left; font-size:3rem; margin-bottom:0px;'>LoveScore AI</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='color:#9E9BC7; font-size:18px; margin-top:5px;'>AI that understands your relationship better than anyone. <br> Built with Machine Learning & Lots of Love.</p>", unsafe_allow_html=True)
-    st.markdown("""
-    <div style='background:rgba(255,90,130,0.12); border-radius:16px; padding:15px; margin-top:15px;'>
-    <span style='color:#FF8FA3;'>🔥 FEATURED:</span> <span style='color:white;'>End-to-End ML Project with R² 0.89 | Deployed on Cloud</span>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align:left;'>💖 LoveScore AI</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#9E9BC7; font-size:18px;'>AI that understands your relationship better than anyone.<br>Built with Machine Learning & Lots of Love.</p>")
+    st.markdown("<div style='background:rgba(255,90,130,0.12); border-radius:16px; padding:12px; color:white;'>🔥 End-to-End ML Project | R² 0.89 | 1000+ Samples Trained</div>", unsafe_allow_html=True)
 
 st.write("")
-tab1, tab2, tab3, tab4 = st.tabs(["💘 Predict Score", "📊 Analytics", "💡 Tips", "👨‍💻 About Me"])
+tab1, tab2, tab3, tab4 = st.tabs(["💘 Predict", "📊 Analytics", "💡 Tips", "👨‍💻 About Me"])
 
-# TAB 1
 with tab1:
     l, r = st.columns([1.2, 1])
     with l:
@@ -72,75 +64,58 @@ with tab1:
             pct = int(score*10)
             if score>=8.5:
                 st.balloons()
-                title,color,msg,img="SOULMATES 💞","#FF5A82","Rare bond! Shaadi pakki!","https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=400"
-            elif score>=7: title,color,msg,img="STRONG BOND 💘","#FF7A88","Solid connection!","https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=400"
-            elif score>=5: title,color,msg,img="NEEDS WORK 💛","#FFB347","Communication pe kaam karo","https://images.unsplash.com/photo-1494774157365-9e04c6720e47?q=80&w=400"
-            else: title,color,msg,img="RED FLAG 🚩","#888","Serious talk needed","https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=400"
-
-            col_img, col_text = st.columns([1,2])
-            with col_img:
-                st.image(img, width=100)
-            with col_text:
-                st.metric("Love Score", f"{score:.1f}/10", f"{pct}% Match")
-
+                title,color="SOULMATES 💞","#FF5A82"
+            elif score>=7: title,color="STRONG BOND 💘","#FF7A88"
+            elif score>=5: title,color="NEEDS WORK 💛","#FFB347"
+            else: title,color="RED FLAG 🚩","#888"
+            st.metric("Your Love Score", f"{score:.1f}/10", f"{pct}% Match")
             st.markdown(f"<h3 style='color:{color}; text-align:center;'>{title}</h3>", unsafe_allow_html=True)
             st.progress(pct)
-            st.success(msg)
-
-            fig = go.Figure(go.Bar(x=[comm,trust,understand,support,happy], y=['Comm','Trust','EQ','Support','Happy'], orientation='h', marker_color=color))
-            fig.update_layout(height=250, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='white', margin=dict(l=0,r=0,t=0,b=0))
-            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar':False})
+            st.bar_chart(pd.DataFrame({"Score":[comm,trust,understand,support,happy]}, index=["Comm","Trust","EQ","Support","Happy"]))
         else:
-            st.image("https://cdn-icons-png.flaticon.com/512/2584/2584606.png", width=120)
-            st.markdown("<p style='text-align:center; color:#8E8BA8;'>Fill details to see your love report + couple photo</p>", unsafe_allow_html=True)
+            st.image("https://cdn-icons-png.flaticon.com/512/2584/2584606.png", width=100)
+            st.markdown("<p style='color:#8E8BA8; text-align:center;'>Fill details to see your love report</p>", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-# TAB 2
 with tab2:
     st.markdown('<div class="glass">', unsafe_allow_html=True)
     ca, cb = st.columns([1.2, 0.8])
     with ca:
         st.markdown("#### What Matters Most in Love?")
-        imp = pd.DataFrame({"Factor":["Trust","Communication","Happiness","Emotional IQ","Support","Efforts","Quality Time","Fights"], "Value":[32,27,22,14,12,8,6,-25]})
-        fig2 = px.bar(imp, x="Value", y="Factor", orientation='h', color="Value", color_continuous_scale=["#555","#FF5A82"])
-        fig2.update_layout(height=350, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='white', showlegend=False)
-        st.plotly_chart(fig2, use_container_width=True)
+        st.bar_chart(pd.DataFrame({"Importance":[32,27,22,14,12]}, index=["Trust","Communication","Happiness","EQ","Support"]))
+        st.caption("Trust (32%) + Communication (27%) = 59% of love. Fights = -25% negative.")
     with cb:
         st.image("https://images.unsplash.com/photo-1529634597503-139d3726fed5?q=80&w=600", use_container_width=True)
-        st.metric("R² Score", "0.89", "High Accuracy")
-        st.caption("Trust + Communication = 59% of love. Fights = -25%")
+        st.metric("Model R²", "0.89", "High Accuracy")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# TAB 3
 with tab3:
     st.markdown('<div class="glass">', unsafe_allow_html=True)
     col1, col2, col3 = st.columns(3)
     with col1:
         st.image("https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=300")
-        st.markdown("**🗣️ Communication**\n- Daily 15 min talk\n- Weekly date night")
+        st.markdown("**🗣️ Communication**\n- Daily 15 min no-phone talk")
     with col2:
         st.image("https://images.unsplash.com/photo-1494774157365-9e04c6720e47?q=80&w=300")
-        st.markdown("**🤝 Trust Building**\n- Promises mat todo\n- Judge mat karo")
+        st.markdown("**🤝 Trust Building**\n- Promises mat todo")
     with col3:
         st.image("https://images.unsplash.com/photo-1529634597503-139d3726fed5?q=80&w=300")
-        st.markdown("**💥 Fights Kam Karo**\n- Gusse me reply mat do\n- Sorry bolna seekho")
+        st.markdown("**💥 Fights Kam Karo**\n- Gusse me reply mat do")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# TAB 4
 with tab4:
     st.markdown('<div class="glass">', unsafe_allow_html=True)
-    ac, bc = st.columns([1, 2])
-    with ac:
-        st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=200)
-    with bc:
-        st.markdown("""
-        ### 👨‍💻 About - For Recruiters
-        **LoveScore AI - End-to-End ML Product**
+    st.markdown("""
+    ### 👨‍💻 About - For Recruiters
+    **LoveScore AI - End-to-End ML Product**
 
-        **Tech:** Python | Scikit-Learn | Plotly | Streamlit Cloud | 1000+ samples
+    **Tech Stack:** Python | Pandas | Numpy | Scikit-Learn | Streamlit Cloud | 1000+ samples
 
-        **Resume Point:** Developed ML compatibility predictor R² 0.89 with SaaS-style UI (4 tabs, photos, charts)
+    **Resume Point:** Developed ML compatibility predictor with R² 0.89 and deployed as SaaS-style multi-tab product with premium UI.
 
-        **Links:** Add your LinkedIn & GitHub here
-        """)
+    **🔗 Connect with me:**
+    """)
+    st.link_button("🔗 LinkedIn - Vansh Rajput", "https://www.linkedin.com/in/vanshrajput1ye")
+    st.link_button("💻 GitHub Profile", "https://github.com/vanshrajput1ye")
+    st.link_button("📄 View Resume", "https://www.linkedin.com/in/vanshrajput1ye")
     st.markdown('</div>', unsafe_allow_html=True)
